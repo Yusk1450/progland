@@ -19,14 +19,21 @@ class CodingViewController: UIViewController, UITableViewDelegate, UITableViewDa
 	
 	@IBOutlet weak var bgView: UIImageView!
 	
+	@IBOutlet weak var mustMarkerImageView1: UIImageView!
+	@IBOutlet weak var mustMarkerImageView2: UIImageView!
+	@IBOutlet weak var mustMarkerImageView3: UIImageView!
+	
 	var draggingImageView: MarkerBase?
 	var markerListEnabled = [Bool]()
 
 	var isFreeMode = false
 	
+	var blackView:UIView?
+	@IBOutlet weak var challengeReadView: UIView!
+	
 	var disposeBag = DisposeBag()
 	
-	let markerList = [
+	var markerList = [
 		"category_building",
 		"marker_building1_1",
 		"marker_building2_1",
@@ -37,14 +44,48 @@ class CodingViewController: UIViewController, UITableViewDelegate, UITableViewDa
 		"marker_car2_1",
 		"marker_car3_1",
 		"marker_car4_1",
+		"marker_copter1_1",
+		"marker_monster1_1",
 		"category_control",
 		"marker_signal1_1",
+		"marker_speedsign1_1"
 	]
 	
     override func viewDidLoad()
 	{
         super.viewDidLoad()
-				
+		
+		// 挑戦モード
+		if (!self.isFreeMode)
+		{
+			markerList.removeAll(where: {$0 == "marker_monster1_1"})
+
+			self.challengeReadView.isHidden = false
+			
+			self.blackView = UIView(frame: self.view.frame)
+			self.blackView?.backgroundColor = UIColor.black
+			self.blackView?.alpha = 0.5
+			
+			self.view.insertSubview(blackView!, belowSubview: self.challengeReadView)
+			
+			// 怪獣マーカーを追加する
+			self.addMarker(markerName: "marker_monster1_1")
+			
+			let mustMarkerImageViews = [self.mustMarkerImageView1, self.mustMarkerImageView2, self.mustMarkerImageView3]
+			for i in stride(from: 0, to: 3, by: 1)
+			{
+				let marker = MarkerBase.createRandomMarker()!
+
+				// すでに登録されているマーカーは採用しない
+				if ProglandEngine.shared.markers.contains(where: { $0.markerTypeName == marker.markerTypeName }) {
+					continue
+				}
+
+				mustMarkerImageViews[i]?.image = marker.image
+				self.addMarker(markerName: "marker_\(marker.markerTypeName!)_1")
+			}
+		}
+		
 		for _ in markerList
 		{
 			self.markerListEnabled.append(true)
@@ -105,6 +146,7 @@ class CodingViewController: UIViewController, UITableViewDelegate, UITableViewDa
 				
 			})
 			.disposed(by: self.disposeBag)
+		
     }
 	
 	override func viewDidAppear(_ animated: Bool)
@@ -124,6 +166,12 @@ class CodingViewController: UIViewController, UITableViewDelegate, UITableViewDa
 	@IBAction func backBtnAction(_ sender: Any)
 	{
 		self.dismiss(animated: true)
+	}
+	
+	@IBAction func readBtnAction(_ sender: Any)
+	{
+		self.blackView?.removeFromSuperview()
+		self.challengeReadView.removeFromSuperview()
 	}
 	
 	@IBAction func playBtnAction(_ sender: Any)
@@ -221,9 +269,38 @@ class CodingViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
 		return cell!
 	}
-	
-	
 
+	/*
+	 * マーカーの初期設定
+	 */
+	func addMarker(markerName:String)
+	{
+		var markerTypeName = markerName.replacingOccurrences(of: "marker_", with: "")
+		markerTypeName = markerTypeName.replacingOccurrences(of: "_1", with: "")
+		markerTypeName = markerTypeName.replacingOccurrences(of: "_2", with: "")
+
+		let markerImage = UIImage(named: "marker_\(markerTypeName)_1")
+		
+		guard let markerImage = markerImage else { return }
+		
+		if let markerImageView = MarkerBase.createMarker(markerTypeName: markerTypeName, markerImage: markerImage)
+		{
+//			markerImageView.markerTypeName = markerTypeName
+			markerImageView.markerIndex = 1
+			markerImageView.frame = CGRect(
+				x: CGFloat.random(in: 0...max(0, self.view.bounds.size.width - markerImage.size.width)),
+				y: CGFloat.random(in: 0...max(0, self.view.bounds.size.height - markerImage.size.height)),
+				width: 182.4,
+				height: 182.4
+			)
+			
+			if let blackView = self.blackView
+			{
+				self.view.insertSubview(markerImageView, aboveSubview: blackView)
+				ProglandEngine.shared.addMarker(markerImageView)
+			}
+		}
+	}
 
 
 }
@@ -316,8 +393,8 @@ extension CodingViewController : MarkerCellImageDelegate
 		ProglandEngine.shared.addMarker(draggingImageView)
 		
 		// 場に展開しているマーカーが最大数を超えた場合
-		var maxNum = 2
-		print(ProglandEngine.shared.markerCount(markerTypeName: markerTypeName))
+		let maxNum = 2
+//		print(ProglandEngine.shared.markerCount(markerTypeName: markerTypeName))
 
 		if (ProglandEngine.shared.markerCount(markerTypeName: markerTypeName) >= maxNum)
 		{

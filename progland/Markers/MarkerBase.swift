@@ -17,6 +17,19 @@ class MarkerBase: UIImageView
 	let uuid = UUID()
 	// マーカー
 	var markerIndex = -1
+	// 必須マーカーかどうか
+	var isMustMarker = false
+	
+	// 移動体かどうか
+	var isMovable = BehaviorRelay<Bool>(value: false)
+	// 移動制御可能か
+	var isMovableControl = BehaviorRelay<Bool>(value: false)
+	// スルーするかどうか
+	var isThroughObject = BehaviorRelay<Bool>(value: false)
+
+	// オブジェクトの高さ
+	let objectHeight = BehaviorRelay<Int>(value: 0)
+	
 	// 矢印表示
 	var isArrowShown = BehaviorRelay<Bool>(value: false)
 	var rightBtn: UIImageView?
@@ -30,8 +43,6 @@ class MarkerBase: UIImageView
 	// 方向
 	// 右1、下2、左3、上4
 	var direction = BehaviorRelay<Int>(value: 3)
-	// 移動可能か
-	var isMovable = BehaviorRelay<Bool>(value: false)
 	// フレームカウント
 	var frameCount = BehaviorRelay<Int>(value: 0)
 	
@@ -65,7 +76,7 @@ class MarkerBase: UIImageView
 	
 	func setupGesture()
 	{
-		if (!self.isMovable.value)
+		if (!self.isMovableControl.value)
 		{
 			return
 		}
@@ -180,6 +191,10 @@ class MarkerBase: UIImageView
 		fatalError("init(coder:) has not been implemented")
 	}
 	
+	func initParam()
+	{
+	}
+	
 	/* --------------------------------------------------------------
 	 * 矢印をタップしたとき
 	 -------------------------------------------------------------- */
@@ -258,14 +273,49 @@ class MarkerBase: UIImageView
 		self.center = touch.location(in: superview)
 	}
 	
+	/* --------------------------------------------------------------
+	 * ランダムにマーカーを作成する
+	 -------------------------------------------------------------- */
+	class func createRandomMarker() -> MarkerBase?
+	{
+		// "monster1"を除外する
+		let availableTypes = MarkerTypeName.allCases.filter { $0 != .monster1 }
+		guard let markerType = availableTypes.randomElement(),
+			  let markerImage = UIImage(named: "marker_\(markerType.rawValue)_1") else
+		{
+			return nil
+		}
+		
+		return createMarker(markerTypeName: markerType.rawValue, markerImage: markerImage)
+	}
+	
 	class func createMarker(markerTypeName: String, markerImage: UIImage) -> MarkerBase?
 	{
 		var marker: MarkerBase?
-		
+				
 		// 建物
 		if (markerTypeName.contains("building"))
 		{
-			marker = MarkerBuilding(image: markerImage)
+			let buildingMarker = MarkerBuilding(image: markerImage)
+			
+			if (markerTypeName.contains("building1"))
+			{
+				buildingMarker.objectHeight.accept(10)
+			}
+			else if (markerTypeName.contains("building2"))
+			{
+				buildingMarker.objectHeight.accept(20)
+			}
+			else if (markerTypeName.contains("building3"))
+			{
+				buildingMarker.objectHeight.accept(30)
+			}
+			else if (markerTypeName.contains("building4"))
+			{
+				buildingMarker.objectHeight.accept(40)
+			}
+			
+			marker = buildingMarker
 		}
 		// 車
 		else if (markerTypeName.contains("car"))
@@ -274,19 +324,19 @@ class MarkerBase: UIImageView
 			
 			if (markerTypeName.contains("car1"))
 			{
-				carMarker.speed.accept(1.0)
+				carMarker.speedScale.accept(1.0)
 			}
 			else if (markerTypeName.contains("car2"))
 			{
-				carMarker.speed.accept(5.0)
+				carMarker.speedScale.accept(5.0)
 			}
 			else if (markerTypeName.contains("car3"))
 			{
-				carMarker.speed.accept(2.0)
+				carMarker.speedScale.accept(2.0)
 			}
 			else if (markerTypeName.contains("car4"))
 			{
-				carMarker.speed.accept(3.0)
+				carMarker.speedScale.accept(3.0)
 			}
 			
 			marker = carMarker
@@ -296,7 +346,27 @@ class MarkerBase: UIImageView
 		{
 			marker = MarkerSignal(image: markerImage)
 		}
+		// ヘリコプター
+		else if (markerTypeName.contains("copter"))
+		{
+			let copterMarker = MarkerCopter(image: markerImage)
+			copterMarker.objectHeight.accept(25)
+			
+			marker = copterMarker
+		}
+		// 怪獣
+		else if (markerTypeName.contains("monster"))
+		{
+			marker = MarkerMonster(image: markerImage)
+		}
+		// 速度標識
+		else if (markerTypeName.contains("speedsign"))
+		{
+			marker = MarkerSpeedSign(image: markerImage)
+		}
+		
 		marker?.setupGesture()
+		marker?.markerTypeName = markerTypeName
 		
 		return marker
 	}
@@ -308,5 +378,10 @@ class MarkerBase: UIImageView
 	
 	func onCollision(marker: MarkerBase)
 	{
+		// マーカーをスルーするかどうか
+		if (marker.isThroughObject.value)
+		{
+			
+		}
 	}
 }

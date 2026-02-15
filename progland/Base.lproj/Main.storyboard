@@ -139,6 +139,38 @@
                                     <action selector="backBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Sro-oU-7bk"/>
                                 </connections>
                             </button>
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ETE-w3-QYF">
+                                <rect key="frame" x="222" y="272" width="536" height="364"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="challenge_alert" translatesAutoresizingMaskIntoConstraints="NO" id="DJa-qc-E2a">
+                                        <rect key="frame" x="0.0" y="0.0" width="536" height="364"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ov2-KO-x5p">
+                                        <rect key="frame" x="166" y="269" width="204" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="readbtn"/>
+                                        <connections>
+                                            <action selector="readBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rq4-Ir-EFl"/>
+                                        </connections>
+                                    </button>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Up4-tD-RzM">
+                                        <rect key="frame" x="228" y="97" width="80" height="80"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r5Y-a2-KJN">
+                                        <rect key="frame" x="324" y="97" width="80" height="80"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OKB-bZ-UrH">
+                                        <rect key="frame" x="132" y="97" width="80" height="80"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -146,7 +178,11 @@
                     <connections>
                         <outlet property="backBtn" destination="viK-5W-DhD" id="nxc-Wp-qck"/>
                         <outlet property="bgView" destination="9zp-9f-qWR" id="kiz-yV-cut"/>
+                        <outlet property="challengeReadView" destination="ETE-w3-QYF" id="m3u-Eu-7oT"/>
                         <outlet property="loadBtn" destination="In7-RC-6SP" id="8Kg-2w-4l0"/>
+                        <outlet property="mustMarkerImageView1" destination="OKB-bZ-UrH" id="O6K-Yl-HZZ"/>
+                        <outlet property="mustMarkerImageView2" destination="Up4-tD-RzM" id="zAJ-tv-Rm7"/>
+                        <outlet property="mustMarkerImageView3" destination="r5Y-a2-KJN" id="X2N-nm-vZA"/>
                         <outlet property="playBtn" destination="JAb-Pt-3YR" id="efw-8l-MQK"/>
                         <outlet property="saveBtn" destination="ztc-Ge-1Vs" id="LpZ-Ci-TVp"/>
                         <outlet property="tableView" destination="7gE-wm-QX7" id="CRr-V3-QSO"/>
@@ -263,11 +299,13 @@
     <resources>
         <image name="backbtn" width="160" height="60"/>
         <image name="bg" width="1081.5" height="811.5"/>
+        <image name="challenge_alert" width="536" height="364"/>
         <image name="challengebtn" width="300" height="100"/>
         <image name="disconnecting" width="68" height="70"/>
         <image name="freebtn" width="300" height="100"/>
         <image name="loadbtn" width="240" height="60"/>
         <image name="playbtn" width="80" height="60"/>
+        <image name="readbtn" width="204" height="60"/>
         <image name="save_nobtn" width="204" height="60"/>
         <image name="save_yesbtn" width="204" height="60"/>
         <image name="savebtn" width="160" height="60"/>

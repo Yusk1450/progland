@@ -18,7 +18,7 @@ class MarkerSignal: MarkerBase
 	{
 		super.init(image: image)
 		
-		self.isMovable.accept(false)
+		self.isMovableControl.accept(false)
 				
 		self.signalState.asObservable()
 			.observe(on: MainScheduler.instance)
@@ -72,9 +72,5 @@ class MarkerSignal: MarkerBase
 	override func run()
 	{
 		super.run()
-	}
-	
-	override func onCollision(marker: MarkerBase)
-	{
 	}
 }

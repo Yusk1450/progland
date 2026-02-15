@@ -1,23 +1,22 @@
 //
-//  MarkerCar.swift
+//  MarkerCopter.swift
 //  progland
 //
-//  Created by ISHIGO Yusuke on 2025/06/27.
+//  Created by ISHIGO Yusuke on 2025/08/07.
 //
 
 import UIKit
 import RxSwift
 import RxCocoa
 
-class MarkerCar: MarkerBase
+class MarkerCopter: MarkerBase
 {
-	var isStopStatus = BehaviorRelay<Bool>(value: false)
-	
 	// ベース速度
 	var speed = BehaviorRelay<Double>(value: 1.0)
 	// 速度倍率
 	var speedScale = BehaviorRelay<Double>(value: 1.0)
-
+	
+	
 	
 	override init(image: UIImage?)
 	{
@@ -33,11 +32,6 @@ class MarkerCar: MarkerBase
 	override func run()
 	{
 		super.run()
-		
-		if (self.isStopStatus.value)
-		{
-			return
-		}
 		
 		// 右
 		if (self.direction.value == 1)
@@ -86,20 +80,7 @@ class MarkerCar: MarkerBase
 	
 	override func onCollision(marker: MarkerBase)
 	{
-		// 信号機
-		if let signalMarker = marker as? MarkerSignal
-		{
-			// 赤色
-			if (signalMarker.signalState.value == 3)
-			{
-				self.isStopStatus.accept(true)
-			}
-			// 青色 or 黄色
-			else
-			{
-				self.isStopStatus.accept(false)
-			}
-		}
-		// 車
+		
 	}
+
 }

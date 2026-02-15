@@ -18,6 +18,8 @@ class ViewController: UIViewController
 	
 	@IBOutlet weak var connectingImageView: UIImageView!
 	
+	
+	
 	let disposeBag = DisposeBag()
 	
 	override func viewDidLoad()
@@ -34,7 +36,7 @@ class ViewController: UIViewController
 				
 				if (ip != "")
 				{
-					wself.connectingImageView.image = UIImage(named: "connected")
+					wself.connectingImageView.image = UIImage(named: "connecting")
 				}
 				
 			}).disposed(by: self.disposeBag)

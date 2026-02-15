@@ -10,6 +10,21 @@ import RxSwift
 import RxCocoa
 import OSCKit
 
+enum MarkerTypeName: String, CaseIterable {
+    case building1 = "building1"
+    case building2 = "building2"
+    case building3 = "building3"
+    case building4 = "building4"
+    case car1 = "car1"
+    case car2 = "car2"
+    case car3 = "car3"
+    case car4 = "car4"
+    case signal1 = "signal1"
+    case copter1 = "copter1"
+    case monster1 = "monster1"
+    case speedsign1 = "speedsign1"
+}
+
 protocol ProglandEngineDelegate: AnyObject
 {
 	func markerDidAdded(engine: ProglandEngine, marker: MarkerBase)
@@ -30,6 +45,7 @@ class ProglandEngine: NSObject
 
 	private let OscAddressReset = "/reset"
 	private let OscAddressSignalState = "/signal"
+	private let OscAddressBuildingState = "/building"
 	private let OscAddressCameraConnected = "/camera/app/check"
 	private let OscAddressCameraConnectReceived = "/app/camera/check"
 
@@ -93,7 +109,10 @@ class ProglandEngine: NSObject
 					
 					for marker in wself.markers
 					{
+						// マーカーを初期位置に戻す
 						marker.frame.origin = wself.startPositions[marker.uuid.uuidString]!
+						// マーカーを初期設定に戻す
+						marker.initParam()
 						
 						marker.isHidden = false
 						marker.isUserInteractionEnabled = true
@@ -119,6 +138,12 @@ class ProglandEngine: NSObject
 			// 当たり判定
 			for otherMarker in self.markers
 			{
+				if (otherMarker.isHidden)
+				{
+					continue
+				}
+				
+				// 自分自身と判定しない
 				if marker !== otherMarker
 				{
 					let rect1 = CGRect(origin: marker.frame.origin, size: marker.frame.size)
@@ -186,6 +211,9 @@ class ProglandEngine: NSObject
 		return count
 	}
 	
+	/* --------------------------------------------------------------
+	 * マーカーが存在するかどうか
+	 --------------------------------------------------------------*/
 	func markerExists(markerTypeName: String, index: Int) -> Bool
 	{
 		for marker in self.markers
@@ -206,6 +234,23 @@ class ProglandEngine: NSObject
 			if let _ = try? client.send(message)
 			{
 				print("send signal state \(signalMarker.signalState.value)")
+			}
+		}
+	}
+	
+	func sendBuildingChangeMarkerCmd(buildingMarker:MarkerBuilding)
+	{
+		print("/"+buildingMarker.markerTypeName!)
+		print([buildingMarker.markerIndex, buildingMarker.life.value])
+		
+		print(ip.value)
+		
+		let client = OSCUdpClient(host: ip.value, port: self.port)
+		if let message = try? OSCMessage(with: "/"+buildingMarker.markerTypeName!, arguments: [buildingMarker.markerIndex, buildingMarker.life.value])
+		{
+			if let _ = try? client.send(message)
+			{
+				print("send building state \(buildingMarker.life.value)")
 			}
 		}
 	}
